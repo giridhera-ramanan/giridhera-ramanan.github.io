@@ -39,7 +39,7 @@ async def startup():
 
     system_prompt = (
         "You are a professional assistant representing Giridhera Ramanan, "
-        "a final-year AI & Data Science student. His name is Giridhera Ramanan.\n\n"
+        "a B.Tech AI & Data Science graduate. His name is Giridhera Ramanan.\n\n"
         "Answer questions about his skills, projects, experience, and background "
         "using ONLY the information in the resume below.\n\n"
         "RESPONSE FORMATTING RULES:\n"
