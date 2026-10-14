@@ -711,12 +711,20 @@
     localStorage.setItem('gr-theme', next);
   }
 
-  function toggleChat() {
-    const w = document.getElementById("chat-window");
-    const isHidden = w.style.display === "none" || w.style.display === "";
-    w.style.display = isHidden ? "flex" : "none";
-    if (isHidden) document.getElementById("chat-input").focus();
+  
+function toggleChat() {
+  const w = document.getElementById("chat-window");
+  const bubble = document.getElementById("chat-bubble");
+  const isClosed = w.style.display === "none";
+
+  w.style.display = isClosed ? "flex" : "none";
+  bubble.style.display = isClosed ? "none" : "flex";
+
+  if (isClosed) {
+    document.getElementById("chat-input").focus();
   }
+}
+
 
   async function sendMessage() {
     const input = document.getElementById("chat-input");
@@ -740,15 +748,48 @@
     }
   }
 
-  function renderMarkdown(text) {
-    return text
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/^[\•\-\*]\s+(.+)/gm, '<li>$1</li>')
-      .replace(/^\d+\.\s+(.+)/gm, '<li>$1</li>')
-      .replace(/(<li>.*<\/li>(\n|$))+/g, match => `<ul style="margin:6px 0 6px 14px; padding:0;">${match}</ul>`)
-      .replace(/\n{2,}/g, '<br><br>')
-      .replace(/\n/g, '<br>');
+  
+function renderMarkdown(text) {
+  const escapeHTML = (value) =>
+    value.replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#39;");
+
+  let html = escapeHTML(text);
+
+  html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+
+  const lines = html.split(/\r?\n/);
+  const output = [];
+  let inList = false;
+
+  for (const line of lines) {
+    const match = line.match(/^\s*[•*-]\s+(.+)$/);
+
+    if (match) {
+      if (!inList) {
+        output.push('<ul style="margin:3px 0 7px 17px;padding:0;">');
+        inList = true;
+      }
+      output.push(`<li style="margin:2px 0;">${match[1]}</li>`);
+    } else {
+      if (inList) {
+        output.push("</ul>");
+        inList = false;
+      }
+      if (line.trim()) {
+        output.push(`<p style="margin:3px 0 6px;">${line}</p>`);
+      }
+    }
   }
+
+  if (inList) output.push("</ul>");
+
+  return output.join("");
+}
+
 
   function appendMessage(text, role, id = "") {
     const box = document.getElementById("chat-messages");
@@ -758,12 +799,13 @@
       background: ${role === "user" ? "var(--teal)" : "var(--surface-alt)"};
       border: 1px solid ${role === "user" ? "transparent" : "var(--line)"};
       color: ${role === "user" ? "#08110f" : "var(--ink-dim)"};
-      padding: 10px 12px;
+      padding: 8px 10px;
       border-radius: ${role === "user" ? "10px 10px 2px 10px" : "10px 10px 10px 2px"};
       font-size: 13px;
-      line-height: 1.6;
+      line-height: 1.45;
       align-self: ${role === "user" ? "flex-end" : "flex-start"};
-      max-width: 85%;
+      max-width: 92%;
+      overflow-wrap: anywhere;
       font-family: 'Inter', sans-serif;
     `;
     if (role === "bot" && id !== "thinking") {
