@@ -290,6 +290,44 @@
         .stat{border-left:none; border-top:1px solid var(--line);}
         .stat:first-child{border-top:none;}
     }
+    
+/* Chat widget refinements */
+#chat-window {
+  width: min(620px, 90vw) !important;
+  height: min(72vh, 650px) !important;
+  border-radius: 14px !important;
+}
+
+#chat-messages {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+}
+
+#chat-messages strong {
+  color: var(--ink);
+}
+
+#chat-messages ul {
+  padding-left: 18px;
+  margin: 3px 0 8px;
+}
+
+#chat-messages li {
+  margin: 2px 0;
+}
+
+#chat-input:focus {
+  border-color: var(--teal) !important;
+}
+
+@media (max-width: 600px) {
+  #chat-window {
+    width: 94vw !important;
+    height: 82dvh !important;
+    max-height: 700px !important;
+  }
+}
+
 </style>
 </head>
 <body>
